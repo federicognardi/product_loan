@@ -1,0 +1,91 @@
+from odoo import models, fields, api
+from odoo import _
+
+class ProductReturn(models.Model):
+    _name = 'product.return'
+    _description = 'Product Return'
+
+    name = fields.Char(string='Return Number', required=True, copy=False, readonly=True, default=lambda self: _('New'))
+    loan_id = fields.Many2one('product.loan', string='Loan', required=True)
+    return_date = fields.Date(string='Return Date', required=True, default=fields.Date.context_today)
+    state = fields.Selection([
+            ('draft', 'Draft'),
+            ('done', 'Done'),
+            ('cancelled', 'Cancelled')
+        ], default='draft', string='Status')
+    product_return_line_ids = fields.One2many('product.return.line', 'return_id', string='Return Lines')
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', _('New')) == _('New'):
+            vals['name'] = self.env['ir.sequence'].next_by_code('product.return') or _('New')
+        result = super(ProductReturn, self).create(vals)
+        return result
+
+    def action_confirm_return(self):
+        for return_record in self:
+            # Crear un movimiento de inventario para cada línea de devolución
+            for line in return_record.product_return_line_ids:
+                self.env['stock.move'].create({
+                    'name': f'Product Return: {return_record.loan_id.partner_id.name}',
+                    'product_id': line.product_id.id,
+                    'product_uom': line.uom_id.id,
+                    'product_uom_qty': line.quantity,
+                    'location_id': return_record.loan_id.location.id,  # Origen: Ubicación seleccionada en el préstamo
+                    'location_dest_id': self.env.ref('stock.stock_location_stock').id,  # Destino: Bodega principal (ajustar según tus necesidades)
+                    'state': 'done',
+                })
+
+                # Actualizar la cantidad devuelta en la línea de préstamo
+                line.loan_line_id.write({'returned_quantity': line.loan_line_id.returned_quantity + line.quantity})
+
+            # Comprobar si todos los productos han sido devueltos
+            all_returned = all(line.quantity == line.returned_quantity for line in return_record.loan_id.product_loan_line_ids)
+            if all_returned:
+                return_record.loan_id.write({'state': 'returned'})
+            else:
+                return_record.loan_id.write({'state': 'partial_return'})
+
+            # Cambiar el estado del registro de devolución a "Confirmado"
+            return_record.write({'state': 'done'})
+
+    @api.onchange('loan_id')
+    def onchange_loan_id(self):
+        if self.loan_id:
+            loan_lines = self.loan_id.product_loan_line_ids.filtered(lambda line: line.returned_quantity < line.quantity)
+            product_ids = loan_lines.mapped('product_id').ids
+            return {'domain': {'product_id': [('id', 'in', product_ids)]}}
+        else:
+            return {'domain': {'product_id': [('id', '=', False)]}}
+
+
+class ProductReturnLine(models.Model):
+    _name = 'product.return.line'
+    _description = 'Product Return Line'
+
+    return_id = fields.Many2one('product.return', string='Return', required=True)
+    loan_line_id = fields.Many2one('product.loan.line', string='Loan Line', required=True)
+    product_id = fields.Many2one('product.product', string='Product', required=True)
+    quantity = fields.Float(string='Quantity', required=True, default=1.0)
+    uom_id = fields.Many2one(related='product_id.uom_id', string='Unit of Measure', readonly=True)
+ 
+    @api.onchange('loan_id')
+    def _onchange_product_id(self):
+        if self.loan_id:
+            available_products = self.loan_id.product_loan_line_ids.filtered(
+                lambda line: line.returned_quantity < line.quantity
+            ).mapped('product_id')
+            return {'domain': {'product_id': [('id', 'in', available_products.ids)]}}
+        else:
+            return {'domain': {'product_id': []}}
+
+    @api.onchange('loan_id')
+    def _onchange_loan_id(self):
+        if self.loan_id:
+            available_products = self.loan_id.product_loan_line_ids.filtered(
+                lambda line: line.returned_quantity < line.quantity
+            ).mapped('product_id')
+            return {'domain': {'product_id': [('id', 'in', available_products.ids)]}}
+        else:
+            return {'domain': {'product_id': []}}
+

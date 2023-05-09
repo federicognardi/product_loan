@@ -1,0 +1,17 @@
+#. module: product_loan
+#: model:ir.model,name:product_loan.product_loan
+msgid "Product Loan"
+msgstr "Préstamo de producto"
+
+#: model:ir.model,name:product_loan.product_loan_line
+msgid "Product Loan Line"
+msgstr "Línea de préstamo de producto"
+
+#: model:ir.model,name:product_loan.product_return
+msgid "Product Return"
+msgstr "Devolución de producto"
+
+#: model:ir.model,name:product_loan.product_return_line
+msgid "Product Return Line"
+msgstr "Línea de devolución de producto"
+

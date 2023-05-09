@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Product Loan Form View -->
+    <record id="product_loan_form_view" model="ir.ui.view">
+        <field name="name">product.loan.form</field>
+        <field name="model">product.loan</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+			<!-- <button name="action_confirm_loan" string="Confirm Loan" type="object" class="oe_highlight" states="draft"/> -->
+		    <button name="action_confirm_loan" string="Confirm Loan" type="object" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+
+                    <button name="action_return_products" string="Return Products" type="object" states="loaned"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,loaned,returned,cancelled"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="loan_date"/>
+                        </group>
+                        <group>
+                            <field name="location" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="expected_return_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Loan Lines">
+                            <field name="product_loan_line_ids" mode="tree,form">
+                                <tree editable="bottom">
+                                    <field name="product_id" domain="[('is_loaned', '=', False)]" />
+                                    <field name="quantity"/>
+                                    <field name="uom_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Product Loan Tree View -->
+    <record id="product_loan_tree_view" model="ir.ui.view">
+        <field name="name">product.loan.tree</field>
+        <field name="model">product.loan</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="partner_id"/>
+                <field name="loan_date"/>
+                <field name="location"/>
+                <field name="expected_return_date"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Product Loan Search View -->
+    <record id="product_loan_search_view" model="ir.ui.view">
+        <field name="name">product.loan.search</field>
+        <field name="model">product.loan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="loan_date"/>
+                <field name="expected_return_date"/>
+                <field name="state"/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Loaned" name="loaned" domain="[('state','=','loaned')]"/>
+                <filter string="Returned" name="returned" domain="[('state','=','returned')]"/>
+                <filter string="Cancelled" name="cancelled" domain="[('state','=','cancelled')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Partner" name="group_by_partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                    <filter string="State" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+
+    <record id="view_product_loan_tree_partial" model="ir.ui.view">
+        <field name="name">product.loan.tree.partial</field>
+        <field name="model">product.loan</field>
+        <field name="arch" type="xml">
+            <tree string="Loans with Partial Return" decoration-info="state == 'partial_return'" decoration-muted="state == 'returned'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="loan_date"/>
+                <field name="expected_return_date"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+
+
+
+    <!-- Product Loan Action -->
+    <record id="product_loan_action" model="ir.actions.act_window">
+<field name="name">Product Loans</field>
+<field name="res_model">product.loan</field>
+<field name="view_mode">tree,form</field>
+<field name="view_id" ref="product_loan_tree_view"/>
+<field name="search_view_id" ref="product_loan_search_view"/>
+<field name="help" type="html">
+<p class="oe_view_nocontent_create">
+Click to create a new product loan.
+</p>
+</field>
+</record>
+
+
+    <record id="action_product_loan_partial" model="ir.actions.act_window">
+        <field name="name">Loans with Partial Return</field>
+        <field name="res_model">product.loan</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('return_state', '!=', 'complete')]</field>
+        <field name="view_id" ref="view_product_loan_tree_partial"/>
+    </record>
+
+
+
+<!-- Product Loan Menu -->
+<menuitem id="main_product_loan_menu" name="Product Loans" sequence="10"/>
+<menuitem id="product_loan_menu" name="Loans" parent="main_product_loan_menu" action="product_loan_action" sequence="10"/>
+<menuitem id="menu_product_loan_partial" name="Partial Returns" action="action_product_loan_partial" sequence="15" parent="main_product_loan_menu"/>
+
+
+<!-- Simple Contract Report -->
+<template id="report_simple_contract">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <div class="page">
+                <h2>Simple Contract</h2>
+                <p>
+                    Partner: <strong t-esc="doc.partner_id.name"/>
+                </p>
+                <p>
+                    Loan Date: <strong t-esc="doc.loan_date"/>
+                </p>
+                <p>
+                    Location: <strong t-esc="doc.location"/>
+                </p>
+                <p>
+                    Expected Return Date: <strong t-esc="doc.expected_return_date"/>
+                </p>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Unit of Measure</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="doc.product_loan_line_ids" t-as="line">
+                            <td t-esc="line.product_id.name"/>
+                            <td t-esc="line.quantity"/>
+                            <td t-esc="line.uom_id.name"/>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>Please sign below to accept the terms of this contract:</p>
+                <p>_____________________________</p>
+                <p>Partner Signature</p>
+            </div>
+        </t>
+    </t>
+</template>
+
+<!-- Simple Contract Report Action -->
+<record id="action_report_simple_contract" model="ir.actions.report">
+    <field name="name">Simple Contract</field>
+    <field name="model">product.loan</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">product_loan.report_simple_contract</field>
+    <field name="report_file">product_loan.report_simple_contract</field>
+    <field name="binding_model_id" ref="model_product_loan"/>
+    <field name="binding_type">report</field>
+</record>
+</odoo>
+

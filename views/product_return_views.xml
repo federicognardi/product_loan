@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Product Return Form View -->
+        <record id="view_product_return_form" model="ir.ui.view">
+            <field name="name">product.return.form</field>
+            <field name="model">product.return</field>
+            <field name="arch" type="xml">
+                <form string="Product Return">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="return_date"/>
+                        </group>
+                        <notebook>
+                            <page string="Return Lines">
+                                <field name="return_line_ids" widget="one2many_list" domain="[('loan_id.state', '=', 'loaned')]" options="{'no_create': True}">
+                                    <tree string="Return Lines" editable="bottom">
+                                        <field name="loan_line_id" domain="[('loan_id.state', '=', 'loaned')]" options="{'no_create': True}">
+                                            <tree string="Loan Lines" editable="bottom">
+                                                <field name="product_id"/>
+                                                <field name="loan_id"/>
+                                                <field name="quantity"/>
+                                                <field name="uom_id"/>
+                                            </tree>
+                                        </field>
+                                        <field name="quantity"/>
+                                        <field name="uom_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Product Return Tree View -->
+        <record id="view_product_return_tree" model="ir.ui.view">
+            <field name="name">product.return.tree</field>
+            <field name="model">product.return</field>
+            <field name="arch" type="xml">
+                <tree string="Product Returns">
+                    <field name="name"/>
+                    <field name="return_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Product Return Action -->
+        <record id="action_product_returns" model="ir.actions.act_window">
+            <field name="name">Product Returns</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.return</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_product_return_tree"/>
+        </record>
+
+        <!-- Product Return Menu Item -->
+        <record id="menu_product_returns" model="ir.ui.menu">
+            <field name="name">Product Returns</field>
+            <field name="parent_id" ref="stock.menu_stock_inventory_control"/>
+            <field name="action" ref="action_product_returns"/>
+            <field name="sequence" eval="11"/>
+        </record>
+    </data>
+</odoo>
+

@@ -1,0 +1,123 @@
+#. module: product_loan
+#: model:ir.model,name:product_loan.product_loan
+msgid "Product Loan"
+msgstr "Préstamo de producto"
+
+#. module: product_loan
+#: model_terms:ir.actions.act_window,help:product_loan.product_loan_action
+msgid "Click to create a new product loan."
+msgstr "Haz clic para crear un nuevo préstamo de producto."
+
+#. module: product_loan
+#: model:ir.actions.act_window,name:product_loan.product_loan_action
+#: model:ir.ui.menu,name:product_loan.main_product_loan_menu
+msgid "Product Loans"
+msgstr "Préstamos de productos"
+
+#. module: product_loan
+#: model:ir.model.fields,field_description:product_loan.field_product_loan__partner_id
+#: model_terms:ir.ui.view,arch_db:product_loan.product_loan_search_view
+msgid "Partner"
+msgstr "Socio"
+
+#. module: product_loan
+#: model:ir.model.fields,field_description:product_loan.field_product_loan__loan_date
+msgid "Loan Date"
+msgstr "Fecha de préstamo"
+
+#. module: product_loan
+#: model:ir.model.fields,field_description:product_loan.field_product_loan__location
+msgid "Location"
+msgstr "Ubicación"
+
+#. module: product_loan
+#: model:ir.model.fields,field_description:product_loan.field_product_loan__expected_return_date
+msgid "Expected Return Date"
+msgstr "Fecha prevista de devolución"
+
+#. module: product_loan
+#: model:ir.model,name:product_loan.model_product_product
+#: model:ir.model.fields,field_description:product_loan.field_product_loan_line__product_id
+#: model_terms:ir.ui.view,arch_db:product_loan.report_simple_contract
+msgid "Product"
+msgstr "Producto"
+
+#. module: product_loan
+#: model:ir.model.fields,field_description:product_loan.field_product_loan_line__quantity
+#: model_terms:ir.ui.view,arch_db:product_loan.report_simple_contract
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: product_loan
+#: model:ir.model.fields,field_description:product_loan.field_product_loan_line__uom_id
+#: model_terms:ir.ui.view,arch_db:product_loan.report_simple_contract
+msgid "Unit of Measure"
+msgstr "Unidad de medida"
+
+#. module: product_loan
+#: model:ir.model.fields,field_description:product_loan.field_product_loan__product_loan_line_ids
+#: model_terms:ir.ui.view,arch_db:product_loan.product_loan_form_view
+msgid "Loan Lines"
+msgstr "Líneas de préstamo"
+
+#. module: product_loan
+#: model:ir.model.fields.selection,name:product_loan.selection__product_loan__state__draft
+#: model_terms:ir.ui.view,arch_db:product_loan.product_loan_search_view
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: product_loan
+#: model:ir.model.fields.selection,name:product_loan.selection__product_loan__state__loaned
+#: model_terms:ir.ui.view,arch_db:product_loan.product_loan_search_view
+msgid "Loaned"
+msgstr "Prestado"
+
+#. module: product_loan
+#: model:ir.model.fields.selection,name:product_loan.selection__product_loan__state__returned
+#: model_terms:ir.ui.view,arch_db:product_loan.product_loan_search_view
+msgid "Returned"
+msgstr "Devuelto"
+
+#. module: product_loan
+#: model:ir.model.fields.selection,name:product_loan.selection__product_loan__state__cancelled
+#: model_terms:ir.ui.view,arch_db:product_loan.product_loan_search_view
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: product_loan
+#: model_terms:ir.ui.view,arch_db:product_loan.product_loan_form_view
+msgid "Confirm Loan"
+msgstr "Confirmar préstamo"
+
+#. module: product_loan
+#: model:ir.ui.menu,name:product_loan.product_loan_menu
+msgid "Loans"
+msgstr "Préstamos"
+
+#. module: product_loan
+#: model:ir.ui.menu,name:product_loan.menu_product_loan_partial
+msgid "Partial Returns"
+msgstr "Devoluciones parciales"
+
+#. module: product_loan
+#: model:ir.actions.act_window,name:product_loan.action_product_loan_partial
+#: model_terms:ir.ui.view,arch_db:product_loan.view_product_loan_tree_partial
+msgid "Loans with Partial Return"
+msgstr "Préstamos con devolución parcial"
+
+#. module: product_loan
+#: model:ir.model.fields,field_description:product_loan.field_product_loan__name
+msgid "Loan Number"
+msgstr "Número de préstamo"
+
+#. module: product_loan
+#: model:ir.model.fields,field_description:product_loan.field_product_loan__state
+msgid "Status"
+msgstr "Estado"
+
+#. module: product_loan
+#: model_terms:ir.ui.view,arch_db:product_loan.product_loan_form_view
+msgid "Return Products"
+msgstr "Devolver productos"
+
+

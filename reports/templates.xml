@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Simple Contract Report -->
+    <template id="report_simple_contract">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <div class="page">
+                    <h2>Simple Contract</h2>
+                    <p>
+                        Partner: <strong t-esc="doc.partner_id.name"/>
+                    </p>
+                    <p>
+                        Loan Date: <strong t-esc="doc.loan_date"/>
+                    </p>
+                    <p>
+                        Location: <strong t-esc="doc.location"/>
+                    </p>
+                    <p>
+                        Expected Return Date: <strong t-esc="doc.expected_return_date"/>
+                    </p>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Unit of Measure</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.product_loan_line_ids" t-as="line">
+                                <td t-esc="line.product_id.name"/>
+                                <td t-esc="line.quantity"/>
+                                <td t-esc="line.uom_id.name"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>Please sign below to accept the terms of this contract:</p>
+                    <p>_____________________________</p>
+                    <p>Partner Signature</p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Simple Contract Report Action -->
+    <record id="action_report_simple_contract" model="ir.actions.report">
+        <field name="name">Simple Contract</field>
+        <field name="model">product.loan</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">product_loan.report_simple_contract</field>
+        <field name="report_file">product_loan.report_simple_contract</field>
+        <field name="binding_model_id" ref="model_product_loan"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
+

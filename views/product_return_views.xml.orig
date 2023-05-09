@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!-- Product Return Tree View -->
+        <record id="view_product_return_tree" model="ir.ui.view">
+            <field name="name">product.return.tree</field>
+            <field name="model">product.return</field>
+            <field name="arch" type="xml">
+                <tree string="Product Return">
+                    <field name="name"/>
+			<!-- <field name="loan_id"/> -->
+		    <field name="loan_id" domain="[('state', '!=', 'returned')]" options="{'no_create': True, 'no_open': True}" attrs="{'readonly': [('loan_id', '!=', False)]}" on_change="onchange_loan_id(loan_id)" />
+                    <field name="return_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Product Return Form View -->
+        <record id="view_product_return_form" model="ir.ui.view">
+            <field name="name">product.return.form</field>
+            <field name="model">product.return</field>
+            <field name="arch" type="xml">
+                <form string="Product Return">
+                    <header>
+                        <button name="action_confirm_return" string="Confirm Return" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done,cancelled"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+				<field name="loan_id"/>
+				<field name="loan_id" domain="[('state', '!=', 'returned')]" />
+                            </group>
+                            <group>
+                                <field name="return_date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Return Lines">
+                                <field name="product_return_line_ids" context="{'default_return_id': active_id}">
+                                    <tree editable="bottom">
+                                        <field name="loan_line_id"/>
+					<field name="product_id" domain="[]" on_change="_onchange_product_id(loan_id)" />
+                                        <field name="quantity"/>
+                                        <field name="uom_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Product Return Action -->
+        <record id="action_product_return" model="ir.actions.act_window">
+            <field name="name">Product Returns</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.return</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_product_return_tree"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new return record.
+                </p>
+            </field>
+        </record>
+
+        <!-- Product Return Menu -->
+			<!-- <menuitem id="menu_product_return" name="Product Returns" action="action_product_return" sequence="15" parent="base.menu_inventory_root"/> -->
+        <!-- Product Loan Menu -->
+        <menuitem id="menu_product_return" name="Product Returns" action="action_product_return" sequence="10"/>
+
+    </data>
+</odoo>
+

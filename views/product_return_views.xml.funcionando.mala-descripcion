@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Product Return Form View -->
+        <record id="view_product_return_form" model="ir.ui.view">
+            <field name="name">product.return.form</field>
+            <field name="model">product.return</field>
+            <field name="arch" type="xml">
+                <form string="Product Return">
+                    <sheet>
+                        <group>
+                            <field name="return_date"/>
+                        </group>
+                        <notebook>
+                            <page string="Return Lines">
+                                <field name="return_line_ids" widget="one2many" nolabel="1">
+                                    <tree editable="bottom">
+					    <!-- <field name="product_id" domain="[('product_loan_state', '=', 'loaned')]"/>
+                                        <field name="quantity"/>
+					    <field name="uom_id"/> -->
+
+			        <field name="loan_line_id" domain="[('loan_id.state', '=', 'loaned')]" options="{'no_create': True}" />
+                                <field name="product_id" attrs="{'readonly': [('loan_line_id', '!=', False)]}" />
+                                <field name="quantity" />
+
+
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Product Return Action -->
+        <record id="action_product_return" model="ir.actions.act_window">
+            <field name="name">Product Returns</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.return</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_product_return_form"/>
+        </record>
+
+        <!-- Product Return Menu -->
+        <menuitem id="menu_product_return" name="Product Returns" parent="product_loan.main_product_loan_menu" sequence="20" action="action_product_return"/>
+    </data>
+</odoo>
+
